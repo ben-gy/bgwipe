@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#fdfbf6" />
+
+    <title>bgwipe — erase image backgrounds in your browser</title>
+    <meta
+      name="description"
+      content="Drop an image, get a transparent PNG. Background removal runs entirely in your browser — your photos never leave your device."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="bgwipe — erase image backgrounds in your browser" />
+    <meta
+      property="og:description"
+      content="Drop an image, get a transparent PNG. Runs entirely in your browser. No upload, no account, no quota."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Security: CSP allowing model fetch from huggingface.co only -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://huggingface.co https://*.huggingface.co https://cdn-lfs.huggingface.co https://*.hf.co; worker-src 'self' blob:; child-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none';"
+    />
+
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <a class="brand" href="/">
+          <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+            <defs>
+              <pattern id="brand-checker" width="6" height="6" patternUnits="userSpaceOnUse">
+                <rect width="3" height="3" fill="#e7e2d8"/>
+                <rect x="3" y="3" width="3" height="3" fill="#e7e2d8"/>
+                <rect x="3" width="3" height="3" fill="#fdfbf6"/>
+                <rect y="3" width="3" height="3" fill="#fdfbf6"/>
+              </pattern>
+            </defs>
+            <rect width="32" height="32" rx="6" fill="url(#brand-checker)"/>
+            <path d="M 8 22 Q 13 6 18 14 Q 22 20 24 12"
+                  fill="none" stroke="#3f7a5a" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span class="brand-name">bgwipe</span>
+        </a>
+        <nav class="topbar-nav">
+          <button type="button" class="nav-link" data-modal="tmpl-how">how it works</button>
+          <button type="button" class="nav-link" data-modal="tmpl-privacy">privacy</button>
+          <button type="button" class="nav-link" data-modal="tmpl-about">about</button>
+        </nav>
+      </header>
+
+      <main class="main-content">
+        <section class="hero" id="hero">
+          <h1 class="hero-title">Erase image backgrounds<br/><span class="hero-accent">in your browser.</span></h1>
+          <p class="hero-sub">
+            Drop a photo. Get back a transparent PNG. Runs entirely on your device —
+            no upload, no account, no quota.
+          </p>
+          <button type="button" class="trust-pill" data-modal="tmpl-privacy">
+            <span class="trust-dot"></span>
+            Your photos never leave this tab
+          </button>
+        </section>
+
+        <section class="workbench" id="workbench">
+          <!-- mounted by main.ts -->
+        </section>
+
+        <aside class="event-drawer-wrap">
+          <button type="button" class="drawer-toggle" id="drawer-toggle" aria-expanded="false">
+            <span class="drawer-toggle-label">live event log</span>
+            <span class="drawer-toggle-caret">▾</span>
+          </button>
+          <div class="event-drawer" id="event-drawer" hidden></div>
+        </aside>
+      </main>
+
+      <footer class="site-footer">
+        <span>
+          Built by <a href="https://benrichardson.dev/" target="_blank" rel="noopener noreferrer">benrichardson.dev</a>
+        </span>
+        <span class="footer-sep">·</span>
+        <button type="button" class="footer-link" data-modal="tmpl-privacy">privacy</button>
+        <span class="footer-sep">·</span>
+        <button type="button" class="footer-link" data-modal="tmpl-about">about</button>
+      </footer>
+    </div>
+
+    <!-- Modal templates -->
+    <template id="tmpl-how">
+      <div class="modal-content">
+        <h2 class="modal-title">how it works</h2>
+        <ol class="steps">
+          <li>
+            <span class="step-num">1</span>
+            <div>
+              <h3>Drop an image</h3>
+              <p>JPEG, PNG, or WebP. The file stays in this browser tab — it is never sent over the network.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">2</span>
+            <div>
+              <h3>Load the model (once)</h3>
+              <p>The first time you use bgwipe, your browser downloads a 44&nbsp;MB image-segmentation model from huggingface.co. It is then cached so future uses are fully offline.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">3</span>
+            <div>
+              <h3>Run on-device inference</h3>
+              <p>A Web Worker decodes your image, runs the model on WebGPU (or WASM if WebGPU is unavailable), and produces a single-channel alpha mask.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">4</span>
+            <div>
+              <h3>Composite the cutout</h3>
+              <p>The mask is resized to your image's original resolution and applied as the alpha channel of a fresh PNG.</p>
+            </div>
+          </li>
+          <li>
+            <span class="step-num">5</span>
+            <div>
+              <h3>Download, copy, or share</h3>
+              <p>Save the transparent PNG to disk, copy it to your clipboard for paste, or share via the system share sheet on mobile.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </template>
+
+    <template id="tmpl-privacy">
+      <div class="modal-content">
+        <h2 class="modal-title">privacy &amp; threat model</h2>
+        <div class="security-grid">
+          <div class="security-card good">
+            <h3>What is protected</h3>
+            <ul>
+              <li>Your image. It never leaves this browser tab.</li>
+              <li>The result PNG. Generated locally, delivered locally.</li>
+              <li>No analytics, no cookies, no third-party fonts, no telemetry.</li>
+              <li>No account, no login, no API key.</li>
+            </ul>
+          </div>
+          <div class="security-card warn">
+            <h3>What is <em>not</em> fully private</h3>
+            <ul>
+              <li>The <strong>first time only</strong>, your browser fetches the ~44&nbsp;MB ML model from <code>huggingface.co</code>. Hugging Face learns that someone with your IP loaded the model — but they never see your image. Subsequent uses are fully offline.</li>
+              <li>GitHub Pages (and Cloudflare in front of it) sees the same page-load metadata any visit to any website creates.</li>
+            </ul>
+          </div>
+          <div class="security-card">
+            <h3>Trust surface</h3>
+            <ul>
+              <li>This static site bundle — built and deployed by GitHub Actions, signed by the commit hash on GitHub.</li>
+              <li>The TLS chain to <code>bgwipe.benrichardson.dev</code> (Cloudflare DNS → GitHub Pages).</li>
+              <li>The RMBG-1.4 ONNX model weights fetched once from Hugging Face.</li>
+              <li>The transformers.js runtime (open source, Apache&nbsp;2.0).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="tmpl-about">
+      <div class="modal-content">
+        <h2 class="modal-title">about bgwipe</h2>
+        <p>
+          bgwipe is a tiny browser tool that erases the background from a photo, locally,
+          using an open-source image-segmentation model running on WebGPU. There is no
+          backend, no upload, no quota, and no account. The whole thing is one HTML page,
+          one JavaScript bundle, and a Web Worker.
+        </p>
+        <p>
+          The segmentation model is
+          <a href="https://huggingface.co/briaai/RMBG-1.4" target="_blank" rel="noopener noreferrer">RMBG-1.4</a>
+          from BRIA AI, runs via
+          <a href="https://huggingface.co/docs/transformers.js" target="_blank" rel="noopener noreferrer">transformers.js</a>.
+          The model is licensed for personal and non-commercial use; bgwipe itself is
+          MIT-licensed.
+        </p>
+        <p class="about-meta">
+          Built by <a href="https://benrichardson.dev/" target="_blank" rel="noopener noreferrer">benrichardson.dev</a>
+          · <a href="https://github.com/ben-gy/bgwipe" target="_blank" rel="noopener noreferrer">source on GitHub</a>
+        </p>
+      </div>
+    </template>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
