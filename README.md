@@ -46,7 +46,7 @@ Inference uses **WebGPU** when available (~1–2 s per image) and falls back to 
 
 **Protected**
 - The uploaded image never leaves the device — inference runs in your tab.
-- No analytics, cookies, third-party fonts, telemetry, or error reporting.
+- No cookies, fingerprinting, third-party fonts, or error reporting. The only analytics is Cloudflare Web Analytics — anonymous, cookie-less page-view counts; no personal data, no cross-site tracking.
 - No account, no API key, no rate limiter.
 
 **Not protected**
