@@ -21,7 +21,7 @@ cached, after which the tool works fully offline and the image never touches a n
 ## how it works
 
 1. You drop, paste, or pick an image (JPEG / PNG / WebP).
-2. On first run only, a Web Worker fetches the ~44 MB RMBG-1.4 ONNX model from
+2. On first run only, a Web Worker fetches the ~168 MB RMBG-1.4 ONNX model from
    huggingface.co and caches it via the browser Cache API.
 3. The worker decodes the image, runs the model to produce a single-channel alpha mask,
    resizes the mask to the original resolution, and composites it as the alpha channel of
@@ -50,7 +50,7 @@ Inference uses **WebGPU** when available (~1–2 s per image) and falls back to 
 - No account, no API key, no rate limiter.
 
 **Not protected**
-- On *first use only*, the browser downloads the ~44 MB model weights from huggingface.co,
+- On *first use only*, the browser downloads the ~168 MB model weights from huggingface.co,
   so Hugging Face's CDN learns that someone at your IP fetched the model. It never sees the
   image. After that, the model is cached and the tool runs fully offline.
 - GitHub Pages / Cloudflare log the initial page load like any website visit.

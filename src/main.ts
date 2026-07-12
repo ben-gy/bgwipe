@@ -283,7 +283,7 @@ function buildSubLine(e: ProgressEvent): string {
       return `${formatBytes(e.bytesLoaded)} of ${formatBytes(e.bytesTotal)} · ${formatPercent((e.bytesLoaded ?? 0) / (e.bytesTotal || 1))}`;
     }
     if (e.fraction != null) return `${formatPercent(e.fraction)} · ${e.label ?? ''}`;
-    return e.label ?? 'Downloading model (~44 MB, one time only)';
+    return e.label ?? 'Downloading model (~168 MB, one time only)';
   }
   if (e.stage === 'decoding') return e.label ?? 'Decoding image';
   if (e.stage === 'inferring') return e.label ?? 'Running the segmentation model';
