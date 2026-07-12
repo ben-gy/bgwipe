@@ -68,7 +68,7 @@ Inference uses **WebGPU** when available (~1–2 s per image) and falls back to 
 - Vitest for unit tests
 - GitHub Pages for hosting, deployed via GitHub Actions
 
-No analytics, no cookies, no third-party fonts, no telemetry.
+No cookies, no fingerprinting, no third-party fonts. Anonymous, cookie-less page-view counts via Cloudflare Web Analytics — no personal data, no cross-site tracking.
 
 ## local development
 
