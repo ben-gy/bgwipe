@@ -8,11 +8,6 @@
  * Owns the state machine: idle → processing → done | error.
  */
 
-// feedback:begin (managed by hub/scripts/feedback/backfill.mjs)
-import { mountFeedback } from './feedback';
-mountFeedback();
-// feedback:end
-
 import * as Comlink from 'comlink';
 import type { Remote } from 'comlink';
 import { mountEventDrawer, emit as logEmit } from './eventlog';
